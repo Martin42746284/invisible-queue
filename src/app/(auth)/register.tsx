@@ -19,19 +19,19 @@ export default function Register() {
   const onSubmit = (v: RegisterInput) =>
     signUp.mutate(v, {
       onSuccess: () => router.replace("/(app)/home"),
-      onError: (e) => Alert.alert("Erreur", getErrorMessage(e)),
+      onError: (e: any) => Alert.alert("Erreur", getErrorMessage(e)),
     });
 
   return (
     <SafeAreaView className="flex-1 bg-bg px-6 justify-center gap-4">
       <View className="gap-2 mb-4"><Text className="text-white text-3xl font-bold">Inscription</Text>
         <Text className="text-muted">Crée ton compte</Text></View>
-      <Controller name="fullName" control={control} render={({ field }) => (
+      <Controller name="fullName" control={control} render={({ field }: any) => (
         <Input label="Nom complet" value={field.value} onChangeText={field.onChange} error={errors.fullName?.message} />)} />
-      <Controller name="email" control={control} render={({ field }) => (
+      <Controller name="email" control={control} render={({ field }: any) => (
         <Input label="Email" autoCapitalize="none" keyboardType="email-address"
           value={field.value} onChangeText={field.onChange} error={errors.email?.message} />)} />
-      <Controller name="password" control={control} render={({ field }) => (
+      <Controller name="password" control={control} render={({ field }: any) => (
         <Input label="Mot de passe" secureTextEntry value={field.value}
           onChangeText={field.onChange} error={errors.password?.message} />)} />
       <Button onPress={handleSubmit(onSubmit)} loading={signUp.isPending}>Créer mon compte</Button>

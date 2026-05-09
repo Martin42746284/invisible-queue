@@ -22,12 +22,13 @@ export default function QueueDetails() {
   if (queue.isLoading) return <View className="flex-1 bg-bg p-6 gap-3"><Skeleton height={120} /><Skeleton height={80} /></View>;
   if (!queue.data) return <View className="flex-1 bg-bg items-center justify-center"><Text className="text-muted">File introuvable</Text></View>;
 
-  const inRange = distance != null && distance <= queue.data.radius_m;
+  const inRange = distance != null && distance <= (queue.data?.radius_m ?? 0);
 
   const handleJoin = () => {
     if (!coords) return Alert.alert("Position requise", "Active la géolocalisation.");
-    if (!inRange) return Alert.alert("Hors zone", `Tu es à ${formatDistance(distance ?? undefined)} (max ${queue.data.radius_m} m).`);
-    router.push({ pathname: "/(app)/join/[id]", params: { id: queue.data!.id } });
+    if (!inRange) return Alert.alert("Hors zone", `Tu es à ${formatDistance(distance ?? undefined)} (max ${queue.data?.radius_m ?? 0} m).`);
+    if (!queue.data) return Alert.alert("Erreur", "File introuvable.");
+    router.push({ pathname: "/(app)/join/[id]", params: { id: queue.data.id } });
   };
 
   return (
@@ -49,7 +50,7 @@ export default function QueueDetails() {
 
         <Card>
           <Text className="text-white font-semibold mb-2">File en cours</Text>
-          {(entries.data ?? []).slice(0, 10).map((e) => (
+          {(entries.data ?? []).slice(0, 10).map((e: any) => (
             <View key={e.id} className="flex-row justify-between py-2 border-b border-border">
               <Text className="text-muted">#{e.position}</Text>
               <Text className="text-white">{e.guest_name ?? "Utilisateur"}</Text>

@@ -19,17 +19,17 @@ export default function Login() {
   const onSubmit = (v: LoginInput) =>
     signIn.mutate(v, {
       onSuccess: () => router.replace("/(app)/home"),
-      onError: (e) => Alert.alert("Erreur", getErrorMessage(e)),
+      onError: (e: any) => Alert.alert("Erreur", getErrorMessage(e)),
     });
 
   return (
     <SafeAreaView className="flex-1 bg-bg px-6 justify-center gap-6">
       <View className="gap-2"><Text className="text-white text-3xl font-bold">Connexion</Text>
         <Text className="text-muted">Accède à ton compte Invisible Queue</Text></View>
-      <Controller name="email" control={control} render={({ field }) => (
+      <Controller name="email" control={control} render={({ field }: any) => (
         <Input label="Email" autoCapitalize="none" keyboardType="email-address"
           value={field.value} onChangeText={field.onChange} error={errors.email?.message} />)} />
-      <Controller name="password" control={control} render={({ field }) => (
+      <Controller name="password" control={control} render={({ field }: any) => (
         <Input label="Mot de passe" secureTextEntry value={field.value}
           onChangeText={field.onChange} error={errors.password?.message} />)} />
       <Button onPress={handleSubmit(onSubmit)} loading={signIn.isPending}>Se connecter</Button>

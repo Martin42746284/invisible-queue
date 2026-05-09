@@ -16,7 +16,7 @@ export default function Home() {
   const queues = useNearbyQueues(coords);
   const { user } = useAuthStore();
 
-  const items = (queues.data ?? []).map((q) => ({
+  const items = (queues.data ?? []).map((q: any) => ({
     ...q,
     distance_m: coords ? haversineMeters(coords.latitude, coords.longitude, q.latitude, q.longitude) : undefined,
   }));

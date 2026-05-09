@@ -55,9 +55,9 @@ export default function JoinQueue() {
   return (
     <SafeAreaView className="flex-1 bg-bg px-6 justify-center gap-4">
       <Text className="text-white text-2xl font-bold">Rejoindre en invité</Text>
-      <Controller name="name" control={control} render={({ field }) => (
+      <Controller name="name" control={control} render={({ field }: any) => (
         <Input label="Nom" value={field.value} onChangeText={field.onChange} error={errors.name?.message} />)} />
-      <Controller name="email" control={control} render={({ field }) => (
+      <Controller name="email" control={control} render={({ field }: any) => (
         <Input label="Email" autoCapitalize="none" keyboardType="email-address"
           value={field.value} onChangeText={field.onChange} error={errors.email?.message} />)} />
       <Button onPress={handleSubmit(submit)} loading={join.isPending}>Rejoindre la file</Button>

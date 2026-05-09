@@ -1,4 +1,4 @@
-export type { DbQueue as Queue, DbQueueEntry as QueueEntry, DbProfile as Profile, DbNotification as AppNotification, QueueStatus, EntryStatus } from "./database";
+export type { DbQueue, DbQueue as Queue, DbQueueEntry, DbQueueEntry as QueueEntry, DbProfile as Profile, DbNotification as AppNotification, QueueStatus, EntryStatus } from "./database";
 
 export interface QueueWithMeta {
   id: string;

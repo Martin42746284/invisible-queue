@@ -37,18 +37,18 @@ export default function CreateQueue() {
   return (
     <SafeAreaView className="flex-1 bg-bg px-6 pt-4 gap-4">
       <Text className="text-white text-2xl font-bold">Nouvelle file</Text>
-      <Controller name="name" control={control} render={({ field }) => (
+      <Controller name="name" control={control} render={({ field }: any) => (
         <Input label="Nom" value={field.value} onChangeText={field.onChange} error={errors.name?.message} />)} />
       <View className="flex-row gap-3">
-        <View className="flex-1"><Controller name="latitude" control={control} render={({ field }) => (
-          <Input label="Latitude" keyboardType="numeric" value={String(field.value)} onChangeText={(t) => field.onChange(Number(t) || 0)} error={errors.latitude?.message} />)} /></View>
-        <View className="flex-1"><Controller name="longitude" control={control} render={({ field }) => (
-          <Input label="Longitude" keyboardType="numeric" value={String(field.value)} onChangeText={(t) => field.onChange(Number(t) || 0)} error={errors.longitude?.message} />)} /></View>
+        <View className="flex-1"><Controller name="latitude" control={control} render={({ field }: any) => (
+          <Input label="Latitude" keyboardType="numeric" value={String(field.value)} onChangeText={(t: string) => field.onChange(Number(t) || 0)} error={errors.latitude?.message} />)} /></View>
+        <View className="flex-1"><Controller name="longitude" control={control} render={({ field }: any) => (
+          <Input label="Longitude" keyboardType="numeric" value={String(field.value)} onChangeText={(t: string) => field.onChange(Number(t) || 0)} error={errors.longitude?.message} />)} /></View>
       </View>
-      <Controller name="radius_m" control={control} render={({ field }) => (
-        <Input label="Rayon (m)" keyboardType="numeric" value={String(field.value)} onChangeText={(t) => field.onChange(Number(t) || 0)} error={errors.radius_m?.message} />)} />
-      <Controller name="avg_time_per_person_s" control={control} render={({ field }) => (
-        <Input label="Temps moyen / personne (s)" keyboardType="numeric" value={String(field.value)} onChangeText={(t) => field.onChange(Number(t) || 0)} error={errors.avg_time_per_person_s?.message} />)} />
+      <Controller name="radius_m" control={control} render={({ field }: any) => (
+        <Input label="Rayon (m)" keyboardType="numeric" value={String(field.value)} onChangeText={(t: string) => field.onChange(Number(t) || 0)} error={errors.radius_m?.message} />)} />
+      <Controller name="avg_time_per_person_s" control={control} render={({ field }: any) => (
+        <Input label="Temps moyen / personne (s)" keyboardType="numeric" value={String(field.value)} onChangeText={(t: string) => field.onChange(Number(t) || 0)} error={errors.avg_time_per_person_s?.message} />)} />
       <Button onPress={handleSubmit(submit)} loading={isSubmitting}>Créer</Button>
     </SafeAreaView>
   );
