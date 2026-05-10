@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { NotificationProvider } from '@/providers/NotificationProvider';
+import { colors } from '@/theme';
 
 export default function App() {
   return (
@@ -14,7 +15,7 @@ export default function App() {
           <AuthProvider>
             <NotificationProvider>
               <StatusBar style="light" />
-              <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#0B1220" } }} />
+              <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
             </NotificationProvider>
           </AuthProvider>
         </QueryProvider>

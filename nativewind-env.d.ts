@@ -1,1 +1,1 @@
-/// <reference types="nativewind/types" />
+/* NativeWind has been removed - no longer needed */

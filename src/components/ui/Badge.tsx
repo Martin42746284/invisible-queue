@@ -1,14 +1,42 @@
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
+import { colors, spacing, fontSize } from "@/theme";
+
+const toneStyles = {
+  default: {
+    container: { backgroundColor: colors.border },
+    text: { color: colors.muted },
+  },
+  success: {
+    container: { backgroundColor: colors.success + '33' },
+    text: { color: colors.success },
+  },
+  danger: {
+    container: { backgroundColor: colors.danger + '33' },
+    text: { color: colors.danger },
+  },
+  warning: {
+    container: { backgroundColor: colors.warning + '33' },
+    text: { color: colors.warning },
+  },
+} as const;
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: 9999,
+  },
+  text: {
+    fontSize: fontSize.xs,
+    fontWeight: '500',
+  },
+});
+
 export const Badge = ({ children, tone = "default" }: { children: string; tone?: "default" | "success" | "danger" | "warning" }) => {
-  const colors = {
-    default: "bg-border text-muted",
-    success: "bg-success/20 text-success",
-    danger: "bg-danger/20 text-danger",
-    warning: "bg-warning/20 text-warning",
-  } as const;
+  const toneStyle = toneStyles[tone];
   return (
-    <View className={`px-2 py-1 rounded-full ${colors[tone].split(" ")[0]}`}>
-      <Text className={`text-xs font-medium ${colors[tone].split(" ")[1]}`}>{children}</Text>
+    <View style={[styles.container, toneStyle.container]}>
+      <Text style={[styles.text, toneStyle.text]}>{children}</Text>
     </View>
   );
 };

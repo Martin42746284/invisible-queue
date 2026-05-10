@@ -1,15 +1,42 @@
-import { TextInput, View, Text, TextInputProps } from "react-native";
+import { TextInput, View, Text, TextInputProps, StyleSheet } from "react-native";
+import { colors, spacing, fontSize } from "@/theme";
+
+const styles = StyleSheet.create({
+  container: {
+    gap: spacing.xs,
+  },
+  label: {
+    color: colors.muted,
+    fontSize: fontSize.xs,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  input: {
+    backgroundColor: colors.surface,
+    color: colors.white,
+    borderRadius: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    fontSize: fontSize.base,
+  },
+  error: {
+    color: colors.danger,
+    fontSize: fontSize.xs,
+  },
+});
 
 export const Input = ({
   label, error, ...props
 }: TextInputProps & { label?: string; error?: string }) => (
-  <View className="gap-1">
-    {label && <Text className="text-muted text-xs uppercase tracking-wider">{label}</Text>}
+  <View style={styles.container}>
+    {label && <Text style={styles.label}>{label}</Text>}
     <TextInput
       placeholderTextColor="#64748B"
-      className="bg-surface text-white rounded-2xl px-4 py-4 border border-border"
+      style={styles.input}
       {...props}
     />
-    {error && <Text className="text-danger text-xs">{error}</Text>}
+    {error && <Text style={styles.error}>{error}</Text>}
   </View>
 );

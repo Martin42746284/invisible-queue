@@ -1,3 +1,2 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Global styles have been migrated to custom React Native StyleSheet */
+/* See src/theme.ts for the theme configuration */

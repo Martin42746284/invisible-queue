@@ -1,4 +1,16 @@
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { colors } from "@/theme";
+
+const styles = StyleSheet.create({
+  skeleton: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    opacity: 0.6,
+  },
+});
+
 export const Skeleton = ({ height = 60 }: { height?: number }) => (
-  <View className="bg-surface rounded-2xl border border-border opacity-60" style={{ height }} />
+  <View style={[styles.skeleton, { height }]} />
 );

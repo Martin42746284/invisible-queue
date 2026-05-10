@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Alert, Text, View } from "react-native";
+import { Alert, Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { Input } from "@/components/ui/Input";
@@ -11,6 +11,25 @@ import { useAuthStore } from "@/store/auth.store";
 import { useGuestStore } from "@/store/guest.store";
 import { useLocation } from "@/hooks/useLocation";
 import { getErrorMessage } from "@/utils/errors";
+import { colors, spacing, fontSize, fontWeight } from "@/theme";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.bg,
+    paddingHorizontal: spacing.lg,
+    justifyContent: 'center',
+    gap: spacing.lg,
+  },
+  title: {
+    color: colors.white,
+    fontSize: fontSize['2xl'],
+    fontWeight: fontWeight.bold,
+  },
+  subtitle: {
+    color: colors.muted,
+  },
+});
 
 export default function JoinQueue() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -44,17 +63,17 @@ export default function JoinQueue() {
 
   if (user) {
     return (
-      <SafeAreaView className="flex-1 bg-bg px-6 justify-center gap-4">
-        <Text className="text-white text-2xl font-bold">Confirmer</Text>
-        <Text className="text-muted">Tu vas rejoindre la file en tant que {user.email}.</Text>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Confirmer</Text>
+        <Text style={styles.subtitle}>Tu vas rejoindre la file en tant que {user.email}.</Text>
         <Button onPress={() => submit()} loading={join.isPending}>Confirmer</Button>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-bg px-6 justify-center gap-4">
-      <Text className="text-white text-2xl font-bold">Rejoindre en invité</Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Rejoindre en invité</Text>
       <Controller name="name" control={control} render={({ field }: any) => (
         <Input label="Nom" value={field.value} onChangeText={field.onChange} error={errors.name?.message} />)} />
       <Controller name="email" control={control} render={({ field }: any) => (
