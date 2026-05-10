@@ -25,7 +25,13 @@ export const queuesService = {
     radius_m: number;
     avg_time_per_person_s: number;
   }) {
-    const { data, error } = await supabase.from("queues").insert(input).select().single();
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) throw new Error("User not authenticated");
+
+    const { data, error } = await supabase.from("queues").insert({
+      ...input,
+      owner_id: user.id,
+    }).select().single();
     if (error) throw error;
     return data as DbQueue;
   },
