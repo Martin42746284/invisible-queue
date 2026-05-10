@@ -9,6 +9,8 @@ export const useQueueEntries = (queueId: string) => {
     queryKey: ["entries", queueId],
     queryFn: () => entriesService.listByQueue(queueId),
     enabled: !!queueId,
+    refetchInterval: 2_000,
+    staleTime: 1_000,
   });
 
   useEffect(() => {

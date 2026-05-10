@@ -30,5 +30,6 @@ export const useQueueStats = (id: string) =>
     queryKey: ["queue", id, "stats"],
     queryFn: () => queuesService.getStats(id),
     enabled: !!id,
-    refetchInterval: 5_000,
+    refetchInterval: 2_000,
+    staleTime: 1_000,
   });

@@ -9,7 +9,8 @@ export const useMyEntryById = (entryId: string | null) => {
     queryKey: ["entry", entryId],
     queryFn: () => entriesService.getById(entryId!),
     enabled: !!entryId,
-    refetchInterval: 5_000,
+    refetchInterval: 2_000,
+    staleTime: 1_000,
   });
 
   useEffect(() => {

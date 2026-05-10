@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/Badge";
 import { PositionRing } from "@/components/queue/PositionRing";
 import { formatWait } from "@/utils/format";
 import { useInternalNotifications } from "@/hooks/useInternalNotifications";
+import { useRealtimeEntry } from "@/hooks/useRealtimeEntry";
+import { useTrackingNotifications } from "@/hooks/useTrackingNotifications";
 import { NOTIFY_REMAINING_THRESHOLD } from "@/constants/config";
 import { getErrorMessage } from "@/utils/errors";
 import { useGuestStore } from "@/store/guest.store";
@@ -71,30 +73,12 @@ export default function Tracking() {
   const queue = useQueue(entry.data?.queue_id ?? "");
   const stats = useQueueStats(entry.data?.queue_id ?? "");
   const leave = useLeaveQueue();
-  const { notify } = useInternalNotifications();
   const guest = useGuestStore();
-  const lastNotified = useRef<number | null>(null);
+
+  useRealtimeEntry(entryId!);
+  useTrackingNotifications(entry.data ?? null, queue.data?.name ?? "");
 
   const ahead = entry.data ? Math.max(0, entry.data.position - 1) : 0;
-
-  useEffect(() => {
-    if (!entry.data) return;
-    if (entry.data.status === "served") {
-      notify("C'est votre tour !", queue.data?.name ?? "");
-      Alert.alert("À toi !", "C'est ton tour.");
-    }
-    if (entry.data.status === "missed") {
-      notify("Tour manqué", "Tu reculs de 3 places.");
-    }
-    if (entry.data.status === "excluded") {
-      notify("Exclusion", "Tu as été retiré de la file.");
-      router.replace("/(app)/home");
-    }
-    if (ahead <= NOTIFY_REMAINING_THRESHOLD && lastNotified.current !== ahead && entry.data.status === "waiting") {
-      notify("Bientôt votre tour", `${ahead} personne(s) devant vous`);
-      lastNotified.current = ahead;
-    }
-  }, [entry.data?.status, ahead]);
 
   const handleLeave = async () => {
     if (!entry.data) return;
