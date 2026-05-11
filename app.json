@@ -7,7 +7,7 @@
     "scheme": "invisiblequeue",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
-    "platforms": ["ios", "android"],
+    "platforms": ["ios", "android", "web"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.invisible.queue",
