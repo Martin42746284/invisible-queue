@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 });
 
 export default function CreateQueue() {
-  const { coords } = useLocation();
+  const { coords, loading, error } = useLocation();
   const { control, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<CreateQueueInput>({
     resolver: zodResolver(createQueueSchema),
     defaultValues: { name: "", latitude: 0, longitude: 0, radius_m: 500, avg_time_per_person_s: 120 },
@@ -46,9 +46,13 @@ export default function CreateQueue() {
       setValue("latitude", coords.latitude);
       setValue("longitude", coords.longitude);
     }
-  }, [coords]);
+  }, [coords, setValue]);
 
   const submit = async (v: CreateQueueInput) => {
+    if (!coords) {
+      Alert.alert("Erreur", "Localisation GPS non disponible");
+      return;
+    }
     try {
       const q = await queuesService.create(v);
       router.replace({ pathname: "/(app)/queue/[id]", params: { id: q.id } });
@@ -56,6 +60,25 @@ export default function CreateQueue() {
       Alert.alert("Erreur", getErrorMessage(e));
     }
   };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Nouvelle file</Text>
+        <Text style={{ color: colors.muted }}>Chargement de votre localisation...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Nouvelle file</Text>
+        <Text style={{ color: colors.danger }}>Erreur GPS: {error}</Text>
+        <Button onPress={() => router.back()}>Retour</Button>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,7 +99,7 @@ export default function CreateQueue() {
         <Input label="Rayon (m)" keyboardType="numeric" value={String(field.value)} onChangeText={(t: string) => field.onChange(Number(t) || 0)} error={errors.radius_m?.message} />)} />
       <Controller name="avg_time_per_person_s" control={control} render={({ field }: any) => (
         <Input label="Temps moyen / personne (s)" keyboardType="numeric" value={String(field.value)} onChangeText={(t: string) => field.onChange(Number(t) || 0)} error={errors.avg_time_per_person_s?.message} />)} />
-      <Button onPress={handleSubmit(submit)} loading={isSubmitting}>Créer</Button>
+      <Button onPress={handleSubmit(submit)} loading={isSubmitting} disabled={!coords}>Créer</Button>
     </SafeAreaView>
   );
 }
