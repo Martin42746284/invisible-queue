@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "scheme": "invisiblequeue",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "platforms": ["ios", "android", "web"],
     "ios": {
       "supportsTablet": true,

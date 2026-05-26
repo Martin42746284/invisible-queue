@@ -9,20 +9,9 @@ export const useMyEntryById = (entryId: string | null) => {
     queryKey: ["entry", entryId],
     queryFn: () => entriesService.getById(entryId!),
     enabled: !!entryId,
-    refetchInterval: 2_000,
-    staleTime: 1_000,
+    refetchInterval: 1_000,
+    staleTime: 500,
   });
-
-  useEffect(() => {
-    if (!entryId) return;
-    const ch = supabase
-      .channel(`entry:${entryId}`)
-      .on("postgres_changes",
-        { event: "*", schema: "public", table: "queue_entries", filter: `id=eq.${entryId}` },
-        () => queryClient.invalidateQueries({ queryKey: ["entry", entryId] }))
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [entryId]);
 
   return q;
 };

@@ -1,10 +1,12 @@
-import { Alert, Text, View, StyleSheet } from "react-native";
+import { Alert, Text, View, StyleSheet, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAuthStore } from "@/store/auth.store";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { authService } from "@/services/auth.service";
+import { useQuery } from "@tanstack/react-query";
+import { queuesService } from "@/services/queues.service";
 import { colors, spacing, fontSize, fontWeight } from "@/theme";
 
 const styles = StyleSheet.create({
@@ -49,6 +51,11 @@ const styles = StyleSheet.create({
 
 export default function Profile() {
   const { user } = useAuthStore();
+  const ownedQueues = useQuery({
+    queryKey: ["queues", "owned"],
+    queryFn: () => queuesService.listOwned(),
+    enabled: !!user,
+  });
 
   const logout = async () => {
     await authService.signOut();
@@ -73,6 +80,34 @@ export default function Profile() {
         <Text style={styles.label}>Email</Text>
         <Text style={styles.email}>{user.email}</Text>
       </Card>
+
+      {(ownedQueues.data ?? []).length > 0 && (
+        <>
+          <Text style={{ color: colors.white, fontWeight: fontWeight.semibold, marginTop: spacing.md }}>
+            Mes files
+          </Text>
+          <FlatList
+            scrollEnabled={false}
+            data={ownedQueues.data}
+            keyExtractor={(q) => q.id}
+            renderItem={({ item }) => (
+              <View key={item.id} style={{ marginVertical: spacing.xs }}>
+                <Card>
+                  <View style={{ marginBottom: spacing.sm }}>
+                    <Text style={{ color: colors.white, fontWeight: fontWeight.semibold }}>{item.name}</Text>
+                  </View>
+                  <Button
+                    onPress={() => router.push({ pathname: "/manage-queue/[id]" as any, params: { id: item.id } })}
+                  >
+                    Gérer
+                  </Button>
+                </Card>
+              </View>
+            )}
+          />
+        </>
+      )}
+
       <Button variant="danger" onPress={() => Alert.alert("Déconnexion", "Confirmer ?", [
         { text: "Annuler" }, { text: "Oui", onPress: logout }])}>Se déconnecter</Button>
     </SafeAreaView>

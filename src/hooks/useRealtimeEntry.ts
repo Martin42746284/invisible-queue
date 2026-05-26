@@ -7,8 +7,14 @@ export const useRealtimeEntry = (entryId: string | null) => {
   useEffect(() => {
     if (!entryId) return;
 
+    const channelName = `entry-realtime:${entryId}`;
+    const existingChannel = supabase.getChannels().find((c: any) => c.topic === channelName);
+    if (existingChannel) {
+      supabase.removeChannel(existingChannel);
+    }
+
     const channel = supabase
-      .channel(`entry-realtime:${entryId}`)
+      .channel(channelName)
       .on(
         "postgres_changes" as any,
         { event: "*", schema: "public", table: "queue_entries", filter: `id=eq.${entryId}` },

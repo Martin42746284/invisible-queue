@@ -17,14 +17,49 @@ export const useNearbyQueues = (coords: Coords | null) => {
 
   useEffect(() => {
     if (!coords) return;
+    const channelName = "queues-list";
+    const existingChannel = supabase.getChannels().find((c: any) => c.topic === channelName);
+    if (existingChannel) {
+      supabase.removeChannel(existingChannel);
+    }
     const ch = supabase
-      .channel("queues-list")
+      .channel(channelName)
       .on("postgres_changes",
         { event: "*", schema: "public", table: "queues" },
         () => queryClient.invalidateQueries({ queryKey: ["queues", "nearby", coords.latitude, coords.longitude] }))
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [coords?.latitude, coords?.longitude]);
+
+  return q;
+};
+
+export const useAllQueues = () => {
+  const q = useQuery({
+    queryKey: ["queues", "all"],
+    queryFn: () => queuesService.listAll(),
+    refetchInterval: 10_000,
+    staleTime: 3_000,
+  });
+
+  useEffect(() => {
+    const channelName = "queues-list-all";
+    const existingChannel = supabase.getChannels().find((c: any) => c.topic === channelName);
+    if (existingChannel) {
+      supabase.removeChannel(existingChannel);
+    }
+    const ch = supabase
+      .channel(channelName)
+      .on("postgres_changes",
+        { event: "*", schema: "public", table: "queues" },
+        () => queryClient.invalidateQueries({ queryKey: ["queues", "all"] }))
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, []);
 
   return q;
 };

@@ -15,8 +15,13 @@ export const useQueueEntries = (queueId: string) => {
 
   useEffect(() => {
     if (!queueId) return;
+    const channelName = `entries:${queueId}`;
+    const existingChannel = supabase.getChannels().find((c: any) => c.topic === channelName);
+    if (existingChannel) {
+      supabase.removeChannel(existingChannel);
+    }
     const ch = supabase
-      .channel(`entries:${queueId}`)
+      .channel(channelName)
       .on("postgres_changes",
         { event: "*", schema: "public", table: "queue_entries", filter: `queue_id=eq.${queueId}` },
         () => {
@@ -24,7 +29,9 @@ export const useQueueEntries = (queueId: string) => {
           queryClient.invalidateQueries({ queryKey: ["queue", queueId, "stats"] });
         })
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [queueId]);
 
   return q;

@@ -44,4 +44,37 @@ export const queuesService = {
       estimated_wait_s: number;
     };
   },
+
+  async listOwned(): Promise<DbQueue[]> {
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) throw new Error("User not authenticated");
+
+    const { data, error } = await supabase
+      .from("queues")
+      .select("*")
+      .eq("owner_id", user.id)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data ?? [];
+  },
+
+  async listAll(): Promise<QueueWithMeta[]> {
+    const { data, error } = await supabase
+      .from("queues")
+      .select("*, queue_entries(count)")
+      .eq("queue_entries.status", "waiting")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map((q: any) => ({
+      id: q.id,
+      name: q.name,
+      latitude: q.latitude,
+      longitude: q.longitude,
+      radius_m: q.radius_m,
+      avg_time_per_person_s: q.avg_time_per_person_s,
+      status: q.status,
+      people_count: q.queue_entries?.[0]?.count ?? 0,
+      estimated_wait_s: (q.queue_entries?.[0]?.count ?? 0) * q.avg_time_per_person_s,
+    }));
+  },
 };

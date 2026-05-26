@@ -1,8 +1,9 @@
 import { FlatList, RefreshControl, Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
+import { useState } from "react";
 import { useLocation } from "@/hooks/useLocation";
-import { useNearbyQueues } from "@/features/queues/useQueues";
+import { useNearbyQueues, useAllQueues } from "@/features/queues/useQueues";
 import { QueueCard } from "@/components/queue/QueueCard";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -14,7 +15,10 @@ import { colors, spacing, fontSize, fontWeight } from "@/theme";
 
 export default function Home() {
   const { coords, error, loading, refresh } = useLocation();
-  const queues = useNearbyQueues(coords);
+  const [showAll, setShowAll] = useState(false);
+  const nearbyQueues = useNearbyQueues(coords);
+  const allQueues = useAllQueues();
+  const queues = showAll ? allQueues : nearbyQueues;
   const { user } = useAuthStore();
 
   const items = (queues.data ?? []).map((q: any) => ({
@@ -26,7 +30,7 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.subtitle}>Files à proximité</Text>
+          <Text style={styles.subtitle}>{showAll ? "Toutes les files" : "Files à proximité"}</Text>
           <Text style={styles.title}>Invisible Queue</Text>
         </View>
         <Link href="/(app)/profile" style={styles.profileLink}>
@@ -34,8 +38,25 @@ export default function Home() {
         </Link>
       </View>
 
-      {loading && <View style={styles.skeletonContainer}><Skeleton /><Skeleton /><Skeleton /></View>}
-      {error && <ErrorState message={error} onRetry={refresh} />}
+      <View style={styles.toggleContainer}>
+        <Button
+          variant={showAll ? "secondary" : "primary"}
+          onPress={() => setShowAll(false)}
+          disabled={showAll === false}
+        >
+          À proximité
+        </Button>
+        <Button
+          variant={showAll ? "primary" : "secondary"}
+          onPress={() => setShowAll(true)}
+          disabled={showAll === true}
+        >
+          Toutes
+        </Button>
+      </View>
+
+      {loading && !showAll && <View style={styles.skeletonContainer}><Skeleton /><Skeleton /><Skeleton /></View>}
+      {error && !showAll && <ErrorState message={error} onRetry={refresh} />}
 
       {!loading && !error && (
         <FlatList
@@ -43,7 +64,7 @@ export default function Home() {
           keyExtractor={(i) => i.id}
           contentContainerStyle={styles.listContainer}
           refreshControl={<RefreshControl refreshing={queues.isFetching} onRefresh={() => queues.refetch()} tintColor="#fff" />}
-          ListEmptyComponent={<EmptyState title="Aucune file proche" description="Élargis ta zone ou crée une nouvelle file." />}
+          ListEmptyComponent={<EmptyState title={showAll ? "Aucune file disponible" : "Aucune file proche"} description={showAll ? "Sois le premier à créer une file !" : "Élargis ta zone ou crée une nouvelle file."} />}
           renderItem={({ item }) => (
             <QueueCard queue={item} onPress={() => router.push({ pathname: "/(app)/queue/[id]", params: { id: item.id } })} />
           )}
@@ -93,6 +114,12 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: fontSize.base,
     fontWeight: fontWeight.semibold,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
   },
   skeletonContainer: {
     paddingHorizontal: spacing.lg,

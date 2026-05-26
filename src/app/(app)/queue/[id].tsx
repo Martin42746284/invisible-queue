@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { formatWait, formatDistance } from "@/utils/format";
 import { useLocation } from "@/hooks/useLocation";
 import { useDistance } from "@/hooks/useDistance";
+import { useQueueNotifications } from "@/hooks/useQueueNotifications";
 import { colors, spacing, fontSize, fontWeight } from "@/theme";
 
 const styles = StyleSheet.create({
@@ -93,6 +94,7 @@ export default function QueueDetails() {
   const entries = useQueueEntries(id!);
   const { coords } = useLocation();
   const distance = useDistance(coords, queue.data ?? null);
+  useQueueNotifications(id);
 
   if (queue.isLoading) {
     return (

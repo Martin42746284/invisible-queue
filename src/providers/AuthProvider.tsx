@@ -9,19 +9,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     hydrateGuest();
-    console.log("AuthProvider: Starting auth check");
+    let isMounted = true;
+
     supabase.auth.getSession().then(({ data }: any) => {
-      console.log("AuthProvider: getSession completed", data);
-      setAuth({ session: data.session, user: data.session?.user ?? null, loading: false });
+      if (isMounted) {
+        setAuth({ session: data.session, user: data.session?.user ?? null, loading: false });
+      }
     }).catch((err) => {
       console.error("AuthProvider: getSession error", err);
-      setAuth({ loading: false });
+      if (isMounted) {
+        setAuth({ loading: false });
+      }
     });
+
     const { data: sub } = supabase.auth.onAuthStateChange((_e: any, session: any) => {
-      console.log("AuthProvider: Auth state changed", session);
-      setAuth({ session, user: session?.user ?? null, loading: false });
+      if (isMounted) {
+        setAuth({ session, user: session?.user ?? null, loading: false });
+      }
     });
-    return () => sub.subscription.unsubscribe();
+
+    return () => {
+      isMounted = false;
+      sub?.subscription?.unsubscribe?.();
+    };
   }, [setAuth, hydrateGuest]);
 
   return <>{children}</>;
